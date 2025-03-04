@@ -1,47 +1,82 @@
 package com.fecd;
 
-public class LinkedList<T> {
+import java.util.Objects;
+import java.util.function.Predicate;
+
+public class LinkedList<T> implements ILinkedList<T> {
     private ListNode<T> head;
 
     public LinkedList() {
         this.head = null;
     }
 
-    public void add(T value) {
-        ListNode<T> newNode = new ListNode<T>(value);
-        if (this.head == null) {
+    private boolean isEmpty() {
+        return head == null;
+    }
+
+    private boolean actualIsNull(ListNode<T> listNode) {
+        Predicate<ListNode<T>> actual = Objects::isNull;
+        return actual.test(listNode);
+    }
+
+    private boolean hasOnlyOneNode(ListNode<T> listNode) {
+        Predicate<ListNode<T>> hasOnlyOneElement = node -> node.next == null;
+        return hasOnlyOneElement.test(listNode);
+    }
+
+    private boolean hasMoreNodesAfterTheCurrentOne(ListNode<T> listNode) {
+        Predicate<ListNode<T>> hasMoreNodesAfterTheCurrentO = node -> node.next != null;
+        return hasMoreNodesAfterTheCurrentO.test(listNode);
+    }
+
+    private ListNode<T> buildNodeList(T value) {
+        return new ListNode<>(value);
+    }
+
+    @Override
+    public void insertNodeAtTheBeginning(T value) {
+        ListNode<T> newNode = buildNodeList(value);
+        newNode.next = head;
+        head = newNode;
+    } // Finished
+
+    @Override
+    public void addNodeAtTheEnd(T value) {
+        ListNode<T> newNode = buildNodeList(value);
+        if (isEmpty()) {
             head = newNode;
         } else {
             ListNode<T> current = head;
-            while (current.next != null) {
+            while (hasMoreNodesAfterTheCurrentOne(current)) {
                 current = current.next;
             }
             current.next = newNode;
         }
-    }
+    } // Finished
 
 
+    @Override
     public void printList() {
         ListNode<T> current = head;
-        if (head == null) {
+        if (isEmpty()) {
             return;
         }
-        while (current != null) {
+        while (!actualIsNull(current)) {
             System.out.print(current.val);
-            if (current.next != null) {
+            if (hasMoreNodesAfterTheCurrentOne(current)) {
                 System.out.print(" -> ");
             }
             current = current.next;
         }
         System.out.println();
-    }
+    } // Finished
 
-    public void removeLast() {
-        if (head == null) {
+    @Override
+    public void removeTheLast() {
+        if (isEmpty()) {
             return;
         }
-
-        if (head.next == null) {
+        if (hasOnlyOneNode(head)) {
             head = null;
         } else {
             ListNode<T> current = head;
@@ -50,33 +85,38 @@ public class LinkedList<T> {
             }
             current.next = null;
         }
-    }
+    } // Finished
 
-
-    public Object remove(T value) {
-        if (head == null) {
-            return "List is empty";
+    @Override
+    public void removeTheFirst() {
+        if (!isEmpty()) {
+            head = (hasMoreNodesAfterTheCurrentOne(head)) ? head.next : null;
         }
+    } // Finished
 
-        if (head.val.equals(value)) {
+
+    @Override
+    public Object removeValue(T value) {
+        if (isEmpty()) {
+            return "List is empty";
+        } else if (head.val.equals(value)) {
             head = head.next;
             return value;
         }
-
         ListNode<T> currentNode = head;
-        while(currentNode.next != null){
-            if(currentNode.next.val == value){
+        while (hasMoreNodesAfterTheCurrentOne(currentNode)) {
+            if (currentNode.next.val == value) {
                 ListNode<T> nodeToRemove = currentNode.next;
                 currentNode.next = currentNode.next.next;
                 return nodeToRemove.val;
             }
             currentNode = currentNode.next;
         }
-
         return "No elements found";
-    }
+    } // Finished
 
 
+    @Override
     public Object get(T value) {
         if (head == null) {
             return "Emptu list";
@@ -85,16 +125,25 @@ public class LinkedList<T> {
             return head.val;
         }
         ListNode<T> current = head;
-        while (current.next != null) {
-            if (current.next == value) {
+        while (hasMoreNodesAfterTheCurrentOne(current)) {
+            if (current.next.equals(value)) {
                 return current.next.val;
             }
             current = current.next;
         }
-        if (current.val == value){
+        if (current.val.equals(value)) {
             return current.val;
         }
         return "No elements found";
+    }
+
+    @SafeVarargs
+    public static <T> LinkedList<T> LinkedListOf(T... values) {
+        LinkedList<T> list = new LinkedList<>();
+        for (T value : values) {
+            list.addNodeAtTheEnd(value);
+        }
+        return list;
     }
 
 }
