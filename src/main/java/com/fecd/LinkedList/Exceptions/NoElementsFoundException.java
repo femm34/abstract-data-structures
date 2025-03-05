@@ -1,4 +1,4 @@
-package com.fecd.Exceptions;
+package com.fecd.LinkedList.Exceptions;
 
 public class NoElementsFoundException extends RuntimeException {
     public NoElementsFoundException(String message) {

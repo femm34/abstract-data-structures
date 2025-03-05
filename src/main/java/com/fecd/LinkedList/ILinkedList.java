@@ -1,4 +1,4 @@
-package com.fecd;
+package com.fecd.LinkedList;
 
 public interface ILinkedList<T> {
     void insertNodeAtTheBeginning(T value);

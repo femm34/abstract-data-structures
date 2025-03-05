@@ -1,4 +1,4 @@
-package com.fecd;
+package com.fecd.LinkedList;
 
 public class ListNode<T> {
     T val;

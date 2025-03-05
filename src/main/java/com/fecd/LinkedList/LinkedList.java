@@ -1,8 +1,8 @@
-package com.fecd;
+package com.fecd.LinkedList;
 
-import com.fecd.Exceptions.EmptyLinkedListException;
-import com.fecd.Exceptions.IndexOutOfRangeException;
-import com.fecd.Exceptions.NoElementsFoundException;
+import com.fecd.LinkedList.Exceptions.EmptyLinkedListException;
+import com.fecd.LinkedList.Exceptions.IndexOutOfRangeException;
+import com.fecd.LinkedList.Exceptions.NoElementsFoundException;
 
 import java.util.Objects;
 import java.util.function.Predicate;

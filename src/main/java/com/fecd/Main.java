@@ -1,5 +1,7 @@
 package com.fecd;
 
+import com.fecd.LinkedList.LinkedList;
+
 public class Main {
     public static void main(String[] args) {
         var linkedList = LinkedList.LinkedListOf("Elia");
