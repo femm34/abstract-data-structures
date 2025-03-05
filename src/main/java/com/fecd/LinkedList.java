@@ -1,17 +1,18 @@
 package com.fecd;
 
+import com.fecd.Exceptions.EmptyLinkedListException;
+import com.fecd.Exceptions.IndexOutOfRangeException;
+import com.fecd.Exceptions.NoElementsFoundException;
+
 import java.util.Objects;
 import java.util.function.Predicate;
 
 public class LinkedList<T> implements ILinkedList<T> {
     private ListNode<T> head;
+    private Long size = 0L;
 
     public LinkedList() {
         this.head = null;
-    }
-
-    private boolean isEmpty() {
-        return head == null;
     }
 
     private boolean actualIsNull(ListNode<T> listNode) {
@@ -33,11 +34,30 @@ public class LinkedList<T> implements ILinkedList<T> {
         return new ListNode<>(value);
     }
 
+    private void decrementSize() {
+        size--;
+    }
+
+    private void incrementSize() {
+        size++;
+    }
+
+    @Override
+    public Long size() {
+        return size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return head == null;
+    }
+
     @Override
     public void insertNodeAtTheBeginning(T value) {
         ListNode<T> newNode = buildNodeList(value);
         newNode.next = head;
         head = newNode;
+        incrementSize();
     } // Finished
 
     @Override
@@ -45,12 +65,14 @@ public class LinkedList<T> implements ILinkedList<T> {
         ListNode<T> newNode = buildNodeList(value);
         if (isEmpty()) {
             head = newNode;
+            incrementSize();
         } else {
             ListNode<T> current = head;
             while (hasMoreNodesAfterTheCurrentOne(current)) {
                 current = current.next;
             }
             current.next = newNode;
+            incrementSize();
         }
     } // Finished
 
@@ -78,12 +100,14 @@ public class LinkedList<T> implements ILinkedList<T> {
         }
         if (hasOnlyOneNode(head)) {
             head = null;
+            decrementSize();
         } else {
             ListNode<T> current = head;
             while (current.next.next != null) {
                 current = current.next;
             }
             current.next = null;
+            decrementSize();
         }
     } // Finished
 
@@ -91,6 +115,7 @@ public class LinkedList<T> implements ILinkedList<T> {
     public void removeTheFirst() {
         if (!isEmpty()) {
             head = (hasMoreNodesAfterTheCurrentOne(head)) ? head.next : null;
+            decrementSize();
         }
     } // Finished
 
@@ -98,9 +123,10 @@ public class LinkedList<T> implements ILinkedList<T> {
     @Override
     public Object removeValue(T value) {
         if (isEmpty()) {
-            return "List is empty";
+            throw new EmptyLinkedListException("List is empty");
         } else if (head.val.equals(value)) {
             head = head.next;
+            decrementSize();
             return value;
         }
         ListNode<T> currentNode = head;
@@ -108,18 +134,37 @@ public class LinkedList<T> implements ILinkedList<T> {
             if (currentNode.next.val == value) {
                 ListNode<T> nodeToRemove = currentNode.next;
                 currentNode.next = currentNode.next.next;
+                decrementSize();
                 return nodeToRemove.val;
             }
             currentNode = currentNode.next;
         }
-        return "No elements found";
+        throw new NoElementsFoundException("No elements found");
     } // Finished
+
+    @Override
+    public Object nodeAt(int index) {
+        if (index < 0) {
+            throw new IndexOutOfRangeException("Index should be a positive number");
+        }
+        ListNode<T> current = head;
+        int counter = 0;
+
+        while (current != null) {
+            if (index == counter) {
+                return current.val;
+            }
+            current = current.next;
+            counter++;
+        }
+        throw new IndexOutOfRangeException("Index out of range");
+    }
 
 
     @Override
     public Object get(T value) {
         if (head == null) {
-            return "Emptu list";
+            throw new EmptyLinkedListException("List is empty");
         }
         if (head.val == value) {
             return head.val;
@@ -134,7 +179,7 @@ public class LinkedList<T> implements ILinkedList<T> {
         if (current.val.equals(value)) {
             return current.val;
         }
-        return "No elements found";
+        throw new NoElementsFoundException("No elements found");
     }
 
     @SafeVarargs

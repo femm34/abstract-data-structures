@@ -13,6 +13,11 @@ public interface ILinkedList<T> {
 
     Object get(T value);
 
+    Object nodeAt(int value);
+
     void printList();
 
+    boolean isEmpty();
+
+    Long size();
 }
